@@ -31,3 +31,11 @@ Mat.bycol[1,]
 
 #look at all values in column 2
 Mat.bycol[,2]
+
+#read in weather station file from your data folder
+
+datW <- read.csv("Z:/mcammarata/GitHub/data/noaa_weather/2011124.csv", stringsAsFactors = T)
+# Path datW <-  read.csv("Z:/mcammarata/GitHub/data/noaa_weather/2011124.csv", stringsAsFactors = T)
+
+# get more information about the dataframe 
+str(datW)
