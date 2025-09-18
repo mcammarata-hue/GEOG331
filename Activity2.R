@@ -156,7 +156,7 @@ averageTemp
 datW$siteN <- as.numeric(datW$NAME)
 
 
-#make a histogram for the first site in our levels, Aberdeen
+#make a histogram for the first site in our levels, Morrisville
 #main= is the title name argument.
 #Here you want to paste the actual name of the factor not the numeric index
 #since that will be more meaningful. 
@@ -216,7 +216,7 @@ averageTemp
 datW$siteN <- as.numeric(datW$NAME)
 
 
-#make a histogram for the first site in our levels, Aberdeen
+#make a histogram for the first site in our levels, Livermore
 #main= is the title name argument.
 #Here you want to paste the actual name of the factor not the numeric index
 #since that will be more meaningful. 
@@ -276,7 +276,7 @@ averageTemp
 datW$siteN <- as.numeric(datW$NAME)
 
 
-#make a histogram for the first site in our levels, Aberdeen
+#make a histogram for the first site in our levels, Mandan Experiment Station
 #main= is the title name argument.
 #Here you want to paste the actual name of the factor not the numeric index
 #since that will be more meaningful. 
@@ -336,7 +336,7 @@ averageTemp
 datW$siteN <- as.numeric(datW$NAME)
 
 
-#make a histogram for the first site in our levels, Aberdeen
+#make a histogram for the first site in our levels, Morman Flatn
 #main= is the title name argument.
 #Here you want to paste the actual name of the factor not the numeric index
 #since that will be more meaningful. 
@@ -439,10 +439,10 @@ qnorm(0.95,
 
 ###############
 #Precip Histogram 
-#look at the mean maximum temperature for Aberdeen
+#look at the mean precip for Aberdeen
 mean(datW$PRCP[datW$NAME == "ABERDEEN, WA US"])
 
-#look at the mean maximum temperature for Aberdeen
+#look at the mean precip for Aberdeen
 #with na.rm argument set to true to ingnore NA
 mean(datW$PRCP[datW$NAME == "ABERDEEN, WA US"], na.rm=TRUE)
 
@@ -498,5 +498,78 @@ points(x.plot,
        lwd = 4, 
        lty = 2)
 
-########
-#Annual Precip 
+#################
+#Annual Precip. 
+
+#Format Date and PRCP
+datW$DATE <- as.Date(datW$DATE, format = "%Y")
+datW$PRCP <- as.numeric(datW$PRCP)
+
+#calculate annual precip sum for ABERDEEN
+datW$sum <- sum(datW$PRCP[which(datW$NAME== "ABERDEEN, WA US")], na.rm=TRUE)
+
+#get the mean across all sites
+#if you want to specify any function specific arguments use a comma and add them after the function
+#here we want to use the na.rm arguments specific to 
+annualprecip <- aggregate(datW$PRCP, by=list(datW$year, datW$NAME), FUN="sum", na.rm=TRUE)
+annualprecip
+
+#change the automatic output of column names to be more meaningful
+#note that MAAT is a common abbreviation for Mean Annual Air Temperature
+colnames(annualprecip) <- c("NAME","MAAT")
+annualprecip
+
+#convert level to number for factor data type
+#you will have to reference the level output or look at the row of data to see the character designation.
+datW$siteN <- as.numeric(datW$NAME)
+
+#make a histogram for the first site in our levels
+#main= is the title name argument.
+#Here you want to paste the actual name of the factor not the numeric index
+#since that will be more meaningful. 
+#note I've named the histogram so I can reference it later
+h1 <- hist(data = annualprecip,
+           freq=FALSE, 
+           main = paste(levels(datW$NAME)[1]),
+           xlab = "Year", 
+           ylab="Precipitation",
+           col="yellow",
+           border="white", 
+           xlim = c(1930,2019))
+#the seq function generates a sequence of numbers that we can use to plot the normal across the range of temperature values
+x.plot <- seq(-10,30, length.out = 100)
+#the dnorm function will produce the probability density based on a mean and standard deviation.
+
+y.plot <-  dnorm(seq(-10,30, length.out = 100),
+                 mean(data = annualprecip,na.rm=TRUE),
+                 sd(data = annualprecip,na.rm=TRUE))
+#create a density that is scaled to fit in the plot  since the density has a different range from the data density.
+#!!! this is helpful for putting multiple things on the same plot
+#!!! It might seem confusing at first. It means the maximum value of the plot is always the same between the two datasets on the plot. Here both plots share zero as a minimum.
+y.scaled <- (max(h1$density)/max(y.plot)) * y.plot
+
+#points function adds points or lines to a graph  
+#the first two arguements are the x coordinates and the y coordinates.
+
+points(x.plot,
+       y.scaled, 
+       type = "l", 
+       col = "royalblue3",
+       lwd = 4, 
+       lty = 2)
+
+###########
+#Calculate Mean Annual Precipitation for All Sites
+# Aberdeen 
+mean(datW$sum[which(datW$NAME== 'ABERDEEN, WA US')]/89)
+#Livermore
+mean(datW$sum[which(datW$NAME== 'LIVERMORE, CA US')]/89)
+# MANDAN EXPERIMENT STATION
+mean(datW$sum[which(datW$NAME== 'MANDAN EXPERIMENT STATION, ND US')]/89)
+#MORMON FLAT, AZ US
+mean(datW$sum[which(datW$NAME== 'MORMON FLAT, AZ US')]/89)
+#MORRISVILLE 6 SW, NY US
+mean(datW$sum[which(datW$NAME== 'MORRISVILLE 6 SW, NY US')]/89)
+
+
+
