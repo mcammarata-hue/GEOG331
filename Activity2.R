@@ -433,9 +433,11 @@ qnorm(0.95,
       sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
 
 ####### Mean Shift
-qnorm(0.95,
-      mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE) + 4,
-      sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
+1 - pnorm(qnorm(0.95,
+                mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
+                sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
+                mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE) + 4,
+      sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE)))
 
 ###############
 #Precip Histogram 
