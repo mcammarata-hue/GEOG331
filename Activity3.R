@@ -23,8 +23,7 @@ assert(length(a) == length(b), "error: unequal length")
 ####Question 1
 ####Question 2
 ##read in the data file
-#skip the first 3 rows since there is additional column info
-#specify the the NA is designated differently
+#skip the first 3 rows 
 datW <- read.csv("Z:/mcammarata/GitHub/data/bewkes/bewkes_weather.csv",
                  na.strings=c("#N/A"), skip=3, header=FALSE)
 #preview data
@@ -47,8 +46,7 @@ print(datW[1,])
 ###Using Packages
 #---use install.packages to install lubridate
 install.packages(c("lubridate"))
-#it is helpful to comment this line after you run this line of code on the computer
-#and the package installs. You really don't want to do this over and over again.
+
 
 library(lubridate)
 
@@ -67,7 +65,6 @@ datW$DD <- datW$doy + (datW$hour/24)
 datW[1,]
 
 ###Checking Missing Data
-#see how many values have missing data for each sensor observation
 #air temperature
 length(which(is.na(datW$air.temperature)))
 
@@ -91,16 +88,45 @@ plot(datW$DD, datW$soil.moisture, pch=19, type="b", xlab = "Day of Year",
 ########SETTING UP TESTS FOR QA/QC########
 ###Visual checks 
 #make a plot with filled in points (using pch)
-#line lines
 plot(datW$DD, datW$air.temperature, pch=19, type="b", xlab = "Day of Year",
      ylab="Air temperature (degrees C)")
 
-#I'm going to make a new column to work with that indicates that I am conducting QAQC
-#because overwriting values should be done cautiously and can lead to confusing issues.
-#It can be particularly confusing when you are just learning R.
-#Here I'm using the ifelse function
-#the first argument is a logical statement to be evaluated as true or false on a vector
-#the second argument is the value that my air.tempQ1 column will be given if the statement
-#is true. The last value is the value that will be given to air.tempQ1 if the statement is false.
-#In this case it is just given the air temperature value
+# QA/QC ifelse function
 datW$air.tempQ1 <- ifelse(datW$air.temperature < 0, NA, datW$air.temperature)
+
+###Realistic Values
+#extreme range of the data and throughout the percentiles
+quantile(datW$air.tempQ1)
+
+#####QUESTION 4#####
+#days with low air temperature
+datW[datW$air.tempQ1 < 8,]  
+#days with really high air temperature
+datW[datW$air.tempQ1 > 33,] 
+
+###Measurements Outside of Sensor Capabilities
+#####UESTION 5######
+#precipitation and lightning strikes plot
+lightscale <- (max(datW$precipitation)/max(datW$lightning.acvitivy)) * datW$lightning.acvitivy
+#mark plot
+plot(datW$DD , datW$precipitation, xlab = "Day of Year", ylab = "Precipitation & lightning",
+     type="n")
+#plot only when there is precipitation 
+points(datW$DD[datW$precipitation > 0], datW$precipitation[datW$precipitation > 0],
+       col= rgb(95/255,158/255,160/255,.5), pch=15)        
+
+#plot only when there is lightning     
+points(datW$DD[lightscale > 0], lightscale[lightscale > 0],
+       col= "tomato3", pch=19)
+#####QUESTION 6#####
+#filter out variables
+datW$air.tempQ2 <- ifelse(datW$precipitation  >= 2 & datW$lightning.acvitivy >0, NA,
+                          ifelse(datW$precipitation > 5, NA, datW$air.tempQ1))
+
+#Create test!!!!#
+
+###########Finishing Your QA/QC###########
+
+#####QUESTION 7######
+#####QUESTION 8######
+#####QUESTION 9######
