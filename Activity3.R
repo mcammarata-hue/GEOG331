@@ -105,7 +105,6 @@ datW[datW$air.tempQ1 < 8,]
 datW[datW$air.tempQ1 > 33,] 
 
 ###Measurements Outside of Sensor Capabilities
-#####UESTION 5######
 #precipitation and lightning strikes plot
 lightscale <- (max(datW$precipitation)/max(datW$lightning.acvitivy)) * datW$lightning.acvitivy
 #mark plot
@@ -118,12 +117,21 @@ points(datW$DD[datW$precipitation > 0], datW$precipitation[datW$precipitation > 
 #plot only when there is lightning     
 points(datW$DD[lightscale > 0], lightscale[lightscale > 0],
        col= "tomato3", pch=19)
+######QUESTION 5#####
+#Determine Lightscale Reflects subset of datW
+assert(length(lightscale) == nrow(datW), "error")
+#test
+assert(length(lightscale) == )
+
 #####QUESTION 6#####
 #filter out variables
 datW$air.tempQ2 <- ifelse(datW$precipitation  >= 2 & datW$lightning.acvitivy >0, NA,
                           ifelse(datW$precipitation > 5, NA, datW$air.tempQ1))
-
-#Create test!!!!#
+#filter wind speed values
+datW$wind.speedQ2 <- ifelse(datW$wind.speed  >= 1 & datW$lightning.acvitivy >0, NA,
+                            ifelse(datW$wind.speed > 5, NA, datW$air.tempQ1))
+#verify filter 
+assert()
 
 ###########Finishing Your QA/QC###########
 
