@@ -7,7 +7,7 @@ assert <- function(statement,err.message){
   }
   
 }
-
+  
 #check how the statement works
 #evaluate a false statement
 assert(1 == 2, "error: unequal values")
