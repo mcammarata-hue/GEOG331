@@ -24,14 +24,21 @@ assert(length(a) == length(b), "error: unequal length")
 ####Question 2
 ##read in the data file
 #skip the first 3 rows 
+#windows
 datW <- read.csv("Z:/mcammarata/GitHub/data/bewkes/bewkes_weather.csv",
                  na.strings=c("#N/A"), skip=3, header=FALSE)
+#FOR MAC -> SET WORKING DIRECTORY AND ASSIGN CSV AS DATW
+datW <- read.csv("bewkes_weather.csv",
+                 na.strings=c("#N/A"), skip=3, header=FALSE)
+
 #preview data
 print(datW[1,])
-#-----get sensor info from file------
+#-----get sensor info from file for windows------
 sensorInfo <-   read.csv("Z:/mcammarata/GitHub/data/bewkes/bewkes_weather.csv",
                          na.strings=c("#N/A"), nrows=2)
-
+#-----get sensor info from file for mac------
+sensorInfo <-   read.csv("bewkes_weather.csv",
+                         na.strings=c("#N/A"), nrows=2)
 print(sensorInfo)
 
 #get column names from sensorInfo table
@@ -117,24 +124,102 @@ points(datW$DD[datW$precipitation > 0], datW$precipitation[datW$precipitation > 
 #plot only when there is lightning     
 points(datW$DD[lightscale > 0], lightscale[lightscale > 0],
        col= "tomato3", pch=19)
+
 ######QUESTION 5#####
-#Determine Lightscale Reflects subset of datW
+#test lightscale is numeric
+assert(is.numeric(lightscale), "error: lightscale is not numeric")
+#test lightscale reflects subset of datW
 assert(length(lightscale) == nrow(datW), "error")
-#test
-assert(length(lightscale) == )
 
 #####QUESTION 6#####
 #filter out variables
 datW$air.tempQ2 <- ifelse(datW$precipitation  >= 2 & datW$lightning.acvitivy >0, NA,
                           ifelse(datW$precipitation > 5, NA, datW$air.tempQ1))
 #filter wind speed values
-datW$wind.speedQ2 <- ifelse(datW$wind.speed  >= 1 & datW$lightning.acvitivy >0, NA,
+datW$wind.speedQ2 <- ifelse(datW$wind.speed  >= 2 & datW$lightning.acvitivy >0, NA,
                             ifelse(datW$wind.speed > 5, NA, datW$air.tempQ1))
 #verify filter 
-assert()
+assert(length(datW$wind.speedQ2) == nrow(datW), "error")
 
+#new wind speed plot 
+plot(datW$DD , datW$wind.speedQ2, 
+     xlab = "Day of Year", ylab = "Wind Speed and Lightning",
+     type="n",
+     ylim = c(0, max(datW$wind.speedQ2, na.rm=TRUE)))
+
+#plot only when there is wind speed 
+points(datW$DD[datW$wind.speedQ2 > 0], datW$wind.speedQ2[datW$wind.speedQ2 > 0],
+       col= rgb(95/255,158/255,160/255,.5), pch=15)        
+
+#plot only when there is lightning     
+points(datW$DD[lightscale > 0], lightscale[lightscale > 0],
+       col= "tomato3", pch=19)
+#add lines
+lines(datW$DD[datW$wind.speedQ2 >0],
+      datW$wind.speedQ2[datW$wind.speedQ2 >0],
+      col= rgb(95/255,158/255,160/255,.5))
 ###########Finishing Your QA/QC###########
 
 #####QUESTION 7######
+#soil moisture plot
+plot(datW$DD , datW$precipitation, xlab = "Day of Year", ylab = "Precipitation & Soil Moisture",
+     type="n",
+     ylim = c(0, 6))
+#plot only when there is precipitation 
+points(datW$DD[datW$precipitation > 0], datW$precipitation[datW$precipitation > 0],
+       col= rgb(95/255,158/255,160/255,.5), pch=15)        
+
+#plot only when there is soil moisture     
+points(datW$DD[datW$soil.moisture > 0], datW$soil.moisture[datW$soil.moisture > 0],
+       col= "tomato3", pch=19)
+
+#soil temperature plot
+plot(datW$DD , datW$air.tempQ2, xlab = "Day of Year", ylab = "Air Temp and Soil Temp",
+     type="n")
+#plot only when there is air temp
+points(datW$DD[datW$air.tempQ2 > 0], datW$air.tempQ2[datW$air.tempQ2 > 0],
+       col= rgb(95/255,158/255,160/255,.5), pch=15)        
+
+#plot only when there is soil temp    
+points(datW$DD[datW$soil.temp > 0], datW$soil.temp[datW$soil.temp > 0],
+       col= "tomato3", pch=19)
 #####QUESTION 8######
+#find averages
+avg_airT <- mean(datW$air.temperature, na.rm=TRUE)
+avg_wind <- mean(datW$wind.speed, na.rm=TRUE)
+avg_soilM <- mean(datW$soil.moisture, na.rm = TRUE)
+avg_soilT <- mean(datW$soil.temp, na.rm=TRUE)
+total_precip <- sum(datW$precipitation, na.rm = TRUE)
+#find number of observations 
+airT <- sum(!is.na(datW$air.temperature))
+wind <- sum(!is.na(datW$wind.speed))
+soilM <- sum(!is.na(datW$soil.moisture))
+soilT <- sum(!is.na(datW$soil.temp))
+precip <- sum(!is.na(datW$precipitation))
+
+table <- data.frame(Value = (c(avg_airT, avg_wind, avg_soilM, 
+                               avg_soilT, total_precip)),
+                    Observations = (c(airT, wind, soilM, soilT, precip)),
+                    Variable = (c('Air Temp', 'Wind Speed', 'Soil Moisture', 'Soil Temp', 
+                    'Total Precip')))
+
+table
 #####QUESTION 9######
+par(mfrow=c(2,2))
+
+#air temp
+plot(datW$DD, datW$air.temperature, type ="b", pch=19,
+     xlab="Day of Year", ylab="Air Temperature",
+     main="Air Temperature")
+#soil moisture
+plot(datW$DD, datW$soil.moisture, type ="b", pch=19,
+     xlab="Day of Year", ylab="Soil Moisture",
+     main="Soil Moisture")
+#Soil temperature
+plot(datW$DD, datW$soil.temp, type ="b", pch=19,
+     xlab="Day of Year", ylab="Soil Temperature",
+     main="Soil Temperature")
+#Precipitation
+plot(datW$DD, datW$precipitation, type ="b", pch=19,
+     xlab="Day of Year", ylab="Precipitation",
+     main="Precipitation")
