@@ -1,3 +1,4 @@
+install.packages(c("tidyverse"))
 #use built in iris dataset
 #take a look at it 
 head(iris)
