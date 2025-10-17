@@ -20,7 +20,7 @@ mylist <- list(
 
 #summary list
 summarylist <- list()
-
+  
 #loop
 for(i in 1:length(mylist)) {
   model <- lm(mylist[[i]])
