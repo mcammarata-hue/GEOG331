@@ -274,7 +274,7 @@ ggplot(data= data2016 %>% filter(!is.na(season)), aes(season,discharge)) +
 
 #filter for 2017 by season
 data2017 <- datD %>% filter(year == 2017)
-data2017 <- data2017 %>% 
+data2017 <- data2017 %>%
   mutate(month=month(datetime),
          season=case_when(
            month %in% c(6,7,8) ~ "Summer", 
