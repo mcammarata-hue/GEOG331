@@ -160,7 +160,8 @@ ggplot(na.omit(datD), aes(x = doy, y= discharge))+
   labs(
     x= "DOY",
     y = "Discharge",
-    color = "Data"
+    color = "Data", 
+    title = "Full 24 Hour Data"
   )
 
 ############################################
@@ -204,8 +205,8 @@ for(i in 1:nrow(hydroP)){
 #determine rain event days 
 unique(datP$doy)
 #subsest discharge and precipitation within range of interest
-hydroD <- datD[datD$doy >= 220 & datD$doy < 222 & datD$year == 2011,]
-hydroP <- datP[datP$doy >= 220 & datP$doy < 222 & datP$year == 2011,]
+hydroD <- datD[datD$doy >= 340 & datD$doy < 342 & datD$year == 2011,]
+hydroP <- datP[datP$doy >= 340 & datP$doy < 342 & datP$year == 2011,]
 
 min(hydroD$discharge)
 
