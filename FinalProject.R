@@ -8,7 +8,7 @@ x <- merge(dbryo, bryometa, by.x = "image.id", by.y = "Specimen_ID")
 
 #load packages
 library(lubridate)
-library(ggplot2)
+library(ggplot2)    
 library(dplyr)
 
 #####Create Violin Plot for D.depressa + R.doma in FL and AL
