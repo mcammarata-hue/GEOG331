@@ -183,6 +183,44 @@ library(dplyr)
 library(tidyr)
 library(ggpubr)
 
+#####Creat Boxplot for D.depressa Reproductive Mode
+#filter data for D.depressa reproductive mode by state
+filterDR_AL <- percol %>%
+  filter(Genus == "Discoporella", State == 'AL', 
+         Reproductive_Mode %in% c('Aclonal', 'Clonal'))
+filterDR_FL <- percol %>%
+  filter(Genus == "Discoporella", State == 'FL',
+         Reproductive_Mode %in% c('Aclonal', 'Clonal'))
+
+#make boxplot for D.depressa AL
+ggplot(data= filterDR_AL, aes(x = Reproductive_Mode, y = avg_a, fill = Reproductive_Mode)) + 
+  geom_boxplot(outlier.shape = NA) + 
+  labs(title = "D.depressa Reproductive Mode AL (Using Mean)", 
+       x = "Reproductive Mode",
+       y = "Area",
+       fill = "Reproductive Mode") +
+  stat_compare_means(
+    method = "t.test",
+    label = "p.format"
+  )+
+  scale_fill_manual(values = c("Clonal" = "yellow3",
+                               "Aclonal" = "plum3"))+
+  ylim(0.03,0.11)
+#make boxplot for D.depressa FL
+ggplot(data= filterDR_FL, aes(x = Reproductive_Mode, y = avg_a, fill = Reproductive_Mode)) + 
+  geom_boxplot(outlier.shape = NA) + 
+  labs(title = "D.depressa Reproductive Mode FL (Using Mean)", 
+       x = "Reproductive Mode",
+       y = "Area", 
+       fill = "Reproductive Mode") +
+  stat_compare_means(
+    method = "t.test",
+    label = "p.format"
+  )+
+  scale_fill_manual(values = c("Clonal" = "yellow3",
+                               "Aclonal" = "plum3"))+
+  ylim(0.03,0.11)
+
 #####Create Violin Plot for D.depressa + R.doma in FL and AL
 #filter data for D.depressa
 filterD <- percol %>% 
